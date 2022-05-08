@@ -43,12 +43,6 @@ class Tile {
         mouseX - gridOffset[0] < this.location.x * cellSize * tileSize + cellSize * tileSize / 2 &&
         mouseY - gridOffset[1] > this.location.y * cellSize * tileSize - cellSize * tileSize / 2 &&
         mouseY - gridOffset[1] < this.location.y * cellSize * tileSize + cellSize * tileSize / 2) {
-      if (mouseIsPressed) {
-        this.enemies.push(new Enemy(this.tiles, this.path))
-        console.log(
-          this.path
-        )
-      }
       push()
       noFill()
       stroke(200, 255, 200)
@@ -160,5 +154,9 @@ class Tile {
       }
     }
     this.path[x + "," + y] = tempPath
+  }
+
+  spawnEnemy(side) {
+    this.enemies.push(new Enemy(this.tiles, this.path, side))
   }
 }

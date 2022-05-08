@@ -32,17 +32,17 @@ class TileManager {
     }
   }
   
-  isEntrance(pos) {
+  isEntrance(pos, sides) {
     let tile = this.tile(pos.x, pos.y);
     let entrances = []
     if (tile != -1) {
       let neighbors = [this.tile(pos.x, pos.y - 1), this.tile(pos.x, pos.y + 1), this.tile(pos.x - 1, pos.y), this.tile(pos.x + 1, pos.y)]
 
       if (tile.portal) return "portal"
-      if (tile.top != undefined && neighbors[0] == -1) entrances.push({"x": pos.x, "y": pos.y - 1})
-      if (tile.bottom != undefined && neighbors[1] == -1) entrances.push({"x": pos.x, "y": pos.y + 1})
-      if (tile.left != undefined && neighbors[2] == -1) entrances.push({"x": pos.x - 1, "y": pos.y})
-      if (tile.right != undefined && neighbors[3] == -1) entrances.push({"x": pos.x + 1, "y": pos.y})
+      if (tile.top != undefined && neighbors[0] == -1) entrances.push((sides) ? "top" : {"x": pos.x, "y": pos.y - 1})
+      if (tile.bottom != undefined && neighbors[1] == -1) entrances.push((sides) ? "bottom" : {"x": pos.x, "y": pos.y + 1})
+      if (tile.left != undefined && neighbors[2] == -1) entrances.push((sides) ? "left" : {"x": pos.x - 1, "y": pos.y})
+      if (tile.right != undefined && neighbors[3] == -1) entrances.push((sides) ? "right" : {"x": pos.x + 1, "y": pos.y})
     }
     return entrances;
   }
@@ -56,5 +56,14 @@ class TileManager {
   
     if (x < 0) this.numTiles[2] = max(this.numTiles[2], Math.abs(x) + 0.5)
     if (x > 0) this.numTiles[3] = max(this.numTiles[3], Math.abs(x) + 0.5)
+  }
+
+  spawnWave() {
+    for (let i = 0; i < this.tiles.length; i++) {
+      let entranceNames = this.isEntrance(this.tiles[i].location, true)
+      for (let j = 0; j < entranceNames.length; j++) {
+        this.tiles[i].spawnEnemy(entranceNames[j])
+      }
+    }
   }
 }
