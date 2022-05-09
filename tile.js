@@ -38,22 +38,22 @@ class Tile {
     push();
     translate(this.location.x * cellSize * tileSize, this.location.y * cellSize * tileSize);
     fill(COLORS["grass"][0], COLORS["grass"][1], COLORS["grass"][2]);
-    square(0, 0, cellSize * tileSize);
+    hexagon(0, 0, cellSize * tileSize);
     if (mouseX - gridOffset[0] > this.location.x * cellSize * tileSize - cellSize * tileSize / 2 &&
         mouseX - gridOffset[0] < this.location.x * cellSize * tileSize + cellSize * tileSize / 2 &&
         mouseY - gridOffset[1] > this.location.y * cellSize * tileSize - cellSize * tileSize / 2 &&
         mouseY - gridOffset[1] < this.location.y * cellSize * tileSize + cellSize * tileSize / 2) {
-      if (mouseIsPressed) {
-        this.enemies.push(new Enemy(this.tiles, this.path))
-        console.log(
-          this.path
-        )
-      }
+      // if (mouseIsPressed) {
+      //   this.enemies.push(new Enemy(this.tiles, this.path))
+      //   console.log(
+      //     this.path
+      //   )
+      // }
       push()
       noFill()
       stroke(200, 255, 200)
       strokeWeight(5);
-      square(0, 0, cellSize * tileSize - 3);
+      hexagon(0, 0, cellSize * tileSize - 3);
       pop()
     }
     translate(-cellSize * tileSize / 2, -cellSize * tileSize / 2);
