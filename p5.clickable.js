@@ -179,8 +179,8 @@ class Clickable {
 		textSize(this.textSize);
 		textFont(this.textFont);
 		text(this.text, this.x + this.width / 2, this.y + this.height / 2);
-    let localMouseX = mouseX - gridOffset[0];
-    let localMouseY = mouseY - gridOffset[1];
+    let localMouseX = mouseX - ((this.isHUD) ? 0 : gridOffset[0]);
+    let localMouseY = mouseY - ((this.isHUD) ? 0 : gridOffset[1]);
 		if (localMouseX >= this.x && localMouseY >= this.y
 			&& localMouseX < this.x + this.width && localMouseY < this.y + this.height) {
 			cl_lastHovered = this;

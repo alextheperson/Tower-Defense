@@ -16,7 +16,11 @@ function setup() {
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   gridOffset = [Math.round(width / 2), Math.round(height / 2)];
-  // randomize();
+  
+  buttons.addButton(0, height - 40, "spawn", () => {tiles.spawnWave()}, true)
+  buttons.buttons[buttons.getButtonById("spawn")].text = "New Wave"
+  buttons.buttons[buttons.getButtonById("spawn")].width = "150"
+  buttons.buttons[buttons.getButtonById("spawn")].height = "40"
 }
 
 function draw() {
@@ -31,7 +35,7 @@ function draw() {
   translate(gridOffset[0], gridOffset[1]);
   tiles.show()
   drawGrid();
-  buttons.show()
+  buttons.show(true)
   circle(0, 0, 5)
 
   // for (let i = 0; i < tiles.length; i++) {
@@ -41,6 +45,7 @@ function draw() {
   //   }
   // }
   pop();
+  buttons.show(false)
 
   let minX = -(tiles.numTiles[3] - 1) * tileSize * cellSize;
   let maxX = width + (tiles.numTiles[2] - 1) * tileSize * cellSize;

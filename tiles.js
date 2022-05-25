@@ -18,6 +18,7 @@ class TileManager {
     this.coordTiles =  {"0,0": 0}
     this.entrances = [0]
     this.numTiles = [0.5, 0.5, 0.5, 0.5] // Up Down Left Right
+    this.enemies = []
   }
 
   tile(x, y) {return (this.tiles[this.coordTiles[x+","+y]] == undefined) ? -1 : this.tiles[this.coordTiles[x+","+y]]}
@@ -30,6 +31,12 @@ class TileManager {
       if (entrances.length > 0) this.entrances.push(i)
       this.tiles[i].show()
     }
+    push()
+    fill(255, 0, 0)
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].show();
+    }
+    pop()
   }
   
   isEntrance(pos, sides) {
@@ -62,7 +69,7 @@ class TileManager {
     for (let i = 0; i < this.tiles.length; i++) {
       let entranceNames = this.isEntrance(this.tiles[i].location, true)
       for (let j = 0; j < entranceNames.length; j++) {
-        this.tiles[i].spawnEnemy(entranceNames[j])
+        this.enemies.push(new Enemy(this, this.tiles[i].path, entranceNames[j]))
       }
     }
   }

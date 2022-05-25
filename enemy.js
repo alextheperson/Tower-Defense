@@ -1,36 +1,43 @@
 class Enemy {
   constructor (tiles, restOfPath, side) {
     this.tiles = tiles;
-    this.restOfPath = restOfPath;
-    this.pos = {"side": side, "node": 0, "toCenter": true}
-    // console.log(restOfPath)
+    this.path = [Object.keys(restOfPath)[0].split(",")]
+    let pathLeft = restOfPath[Object.keys(restOfPath)[0]]
+    while (true) {
+      let nextTile = pathLeft[Math.floor((Math.random()*pathLeft.length))];
+      this.path.push(Object.keys(nextTile)[0].split(","))
+      pathLeft = Object.values(nextTile)[0]
+      if (Object.values(nextTile)[0] === "tower") break
+    }
+    console.log(this.path)
+    this.pathProgress = 0;
+    this.tilePath = side;
+    this.tilePathProgress = 0;
+    this.updateCooldown = 0;
   }
 
   show() {
     this.update()
-    let coords = Object.keys(this.restOfPath)[0].split(",")
     push()
-    translate(coords[0] * cellSize * tileSize - cellSize * tileSize / 2, coords[1] * cellSize * tileSize - cellSize * tileSize / 2)
-    console.log(coords, this.tiles.tile(coords[0], coords[1]), this.pos["side"])
-    circle(this.tiles.tile(coords[0], coords[1])[this.pos["side"]][this.pos["node"]][0] * cellSize, this.tiles.tile(coords[0], coords[1])[this.pos["side"]][this.pos["node"]][1] * cellSize, 20)
+    translate(this.path[this.pathProgress][0] * tileSize * cellSize - tileSize * cellSize / 2, this.path[this.pathProgress][1] * tileSize * cellSize - tileSize * cellSize / 2)
+    let currentTile = this.tiles.tile(this.path[this.pathProgress][0], this.path[this.pathProgress][1])
+    circle(currentTile[this.tilePath][this.tilePathProgress][0] * cellSize, currentTile[this.tilePath][this.tilePathProgress][1] * cellSize, 20)
     pop()
   }
 
   update() {
-    let coords = Object.keys(this.restOfPath)[0].split(",")
-    let pathLength = this.tiles.tile(coords[0], coords[1])[this.pos["side"]].length;
-    if (this.pos["node"] + 1 == pathLength) {
-      this.pos["node"] = 0;
-      this.pos["side"] = "center"
-    }
-    if (this.pos["toCenter"]) {
-      if (this.pos["node"] + 1 < pathLength) {
-        this.pos["node"] += 1;
+    let currentTile = this.tiles.tile(this.path[this.pathProgress][0], this.path[this.pathProgress][1])
+    let currentPath = currentTile[this.tilePath]
+    if (this.updateCooldown == 10) {
+      this.updateCooldown = 0
+      if (this.tilePathProgress < currentPath.length - 1) {
+        this.tilePathProgress += 1
+      }
+      else {
+        this.tilePathProgress = 0
       }
     } else {
-      if (this.pos["node"] - 1 > 0) {
-        this.pos["node"] -= 1;
-      }
+      this.updateCooldown += 1
     }
   }
 }

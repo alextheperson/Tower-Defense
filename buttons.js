@@ -24,11 +24,13 @@ class ButtonManager {
     }
   }
   
-  show() {
+  show(isGrid) {
     this.createButtons()
     
     for (let i = 0; i < this.buttons.length; i++) {
-      this.buttons[i].draw()
+      if (!isGrid == this.buttons[i].isHUD) {
+        this.buttons[i].draw()
+      }
     }
   }
 
@@ -49,23 +51,25 @@ class ButtonManager {
       }
       this.addButton(x / numNeighbors, y / numNeighbors, id, () => {
         this.tiles.addTile(nextTile.x, nextTile.y);
-        this.buttons = this.buttons.slice(this.getButtonById(id), this.getButtonById(id));
-      })
+        this.buttons.splice(this.getButtonById(id), 1);
+      }, false)
     }
   }
 
-  addButton(x, y, id, onclick) {
+  addButton(x, y, id, onclick, isHUD) {
     let ids = [];
     for (let i = 0; i < this.buttons.length; i++) {
       ids.push(this.buttons[i].id);
       if (this.buttons[i].id == id) {
         this.buttons[i].locate(x, y);
         this.buttons[i].onPress = onclick;
+        this.buttons[i].isHUD = isHUD;
         break;
       }
     }
     if (ids.indexOf(id) == -1) {
       let newButton = new Clickable(x, y, id);
+      newButton.isHUD = isHUD;
       newButton.onPress = onclick;
       this.buttons.push(newButton);
     }

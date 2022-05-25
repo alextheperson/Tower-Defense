@@ -19,7 +19,6 @@ class Tile {
   constructor (tileManager, pos, json) {
     this.tiles = tileManager
     this.location = {"x": pos[0], "y": pos[1]}
-    this.enemies = []
     if (!json) {
       this.generateTile(pos[0], pos[1])
     } else {
@@ -76,11 +75,6 @@ class Tile {
       strokeWeight(3)
       circle(this.center[0] * cellSize, this.center[1] * cellSize, cellSize);
       pop();
-    }
-    pop()
-    push()
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].show();
     }
     pop()
   }
@@ -154,9 +148,5 @@ class Tile {
       }
     }
     this.path[x + "," + y] = tempPath
-  }
-
-  spawnEnemy(side) {
-    this.enemies.push(new Enemy(this.tiles, this.path, side))
   }
 }
