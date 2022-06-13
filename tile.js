@@ -3,15 +3,15 @@ function tracePath(points) {
   beginShape();
   for (let i = 0; i < points.length; i++) {
     let currTile = points[i];
-    vertex(currTile[0] * cellSize, currTile[1] * cellSize);
+    vertex(currTile[0] * CELL_WIDTH, currTile[1] * CELL_WIDTH);
   }
   endShape();
   // Add join at center
   push()
   noStroke()
   fill(COLORS["path"][0], COLORS["path"][1], COLORS["path"][2])
-  translate(points[points.length - 1][0] * cellSize, points[points.length - 1][1] * cellSize);
-  square(0, 0, cellSize / 2)
+  translate(points[points.length - 1][0] * CELL_WIDTH, points[points.length - 1][1] * CELL_WIDTH);
+  circle(0, 0, CELL_WIDTH / 2)
   pop()
 }
 
@@ -35,25 +35,19 @@ class Tile {
 
   show() {
     push();
-    translate(this.location.x * cellSize * tileSize, this.location.y * cellSize * tileSize);
+    translate(this.location.x * TILE_SIZE, this.location.y * TILE_SIZE);
     fill(COLORS["grass"][0], COLORS["grass"][1], COLORS["grass"][2]);
-    square(0, 0, cellSize * tileSize);
-    if (mouseX - gridOffset[0] > this.location.x * cellSize * tileSize - cellSize * tileSize / 2 &&
-        mouseX - gridOffset[0] < this.location.x * cellSize * tileSize + cellSize * tileSize / 2 &&
-        mouseY - gridOffset[1] > this.location.y * cellSize * tileSize - cellSize * tileSize / 2 &&
-        mouseY - gridOffset[1] < this.location.y * cellSize * tileSize + cellSize * tileSize / 2) {
-      push()
-      noFill()
-      stroke(200, 255, 200)
-      strokeWeight(5);
-      square(0, 0, cellSize * tileSize - 3);
-      pop()
-    }
-    translate(-cellSize * tileSize / 2, -cellSize * tileSize / 2);
+    square(0, 0, TILE_SIZE);
+    translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
 
     push()
+    for (let i = 1; i < 8; i++) line(0, i * CELL_WIDTH, 8 * CELL_WIDTH, i * CELL_WIDTH)
+    for (let i = 1; i < 8; i++) line(i * CELL_WIDTH, 0, i * CELL_WIDTH, 8 * CELL_WIDTH)
+    pop()
+    
+    push()
     stroke(COLORS["path"][0], COLORS["path"][1], COLORS["path"][2]);
-    strokeWeight(cellSize / 2);
+    strokeWeight(CELL_WIDTH / 2);
     if (this.top != undefined) tracePath(this.top.concat([this.center]));
     if (this.bottom != undefined) tracePath(this.bottom.concat([this.center]));
     if (this.left != undefined) tracePath(this.left.concat([this.center]));
@@ -64,7 +58,7 @@ class Tile {
       push();
       fill(0);
       noStroke();
-      circle(4 * cellSize, 5.5 * cellSize, cellSize * 1.5);
+      circle(4 * CELL_WIDTH, 5.5 * CELL_WIDTH, CELL_WIDTH * 1.5);
       pop();
     }
     
@@ -73,10 +67,55 @@ class Tile {
       fill(COLORS.portal[0], COLORS.portal[1], COLORS.portal[2]);
       stroke(COLORS["path"][0], COLORS["path"][1], COLORS["path"][2]);
       strokeWeight(3)
-      circle(this.center[0] * cellSize, this.center[1] * cellSize, cellSize);
+      circle(this.center[0] * CELL_WIDTH, this.center[1] * CELL_WIDTH, CELL_WIDTH);
       pop();
     }
     pop()
+  }
+
+  onPath(x, y) {
+    let isOn = false;
+    if (this.top) {
+      let tempPath = this.top.concat([this.center])
+      for (let i = 0; i < tempPath.length - 1; i++) {
+        let currPos = tempPath[i]
+        let nextPos = tempPath[i+1]
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+          isOn = true;
+            }
+      }
+    }
+    if (this.bottom) {
+      let tempPath = this.bottom.concat([this.center])
+      for (let i = 0; i < tempPath.length - 1; i++) {
+        let currPos = tempPath[i]
+        let nextPos = tempPath[i+1]
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+          isOn = true;
+            }
+      }
+    }
+    if (this.left) {
+      let tempPath = this.left.concat([this.center])
+      for (let i = 0; i < tempPath.length - 1; i++) {
+        let currPos = tempPath[i]
+        let nextPos = tempPath[i+1]
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+          isOn = true;
+            }
+      }
+    }
+    if (this.right) {
+      let tempPath = this.right.concat([this.center])
+      for (let i = 0; i < tempPath.length - 1; i++) {
+        let currPos = tempPath[i]
+        let nextPos = tempPath[i+1]
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+          isOn = true;
+            }
+      }
+    }
+    return isOn;
   }
 
   generateTile(x, y) {
