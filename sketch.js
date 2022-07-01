@@ -2,14 +2,18 @@ var gridOffset = [0, 0];
 var gridScale = 1;
 var bounds = [[0, 0],[0, 0]]
 
-var coins = 100
+var viewWindow = {
+  "center": [0, 0],
+  "width": [],
+  "height": []
+}
+
+var coins = 150
 var health = 10
 
-var tiles = new TileManager()
-var buttons = new ButtonManager(tiles)
-var ui = new UI(enemyTypes, buttons)
+var tiles, buttons, ui
 
-var towerToPlace = "arrow"
+var towerToPlace = "Arrow Tower"
 var timeScale = 1
 var nthWave = 0;
 
@@ -22,17 +26,21 @@ function setup() {
   strokeCap(SQUARE);
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
+  COLORS.init()
   gridOffset = [Math.round(width / 2), Math.round(height / 2)];
   document.body.addEventListener("contextmenu", (e) => {
     e.preventDefault()
   })
+  tiles = new TileManager()
+  buttons = new ButtonManager(tiles)
+  ui = new UI(enemyTypes, buttons)
 }
 
 function draw() {
   resizeCanvas(window.innerWidth, window.innerHeight)
   background(255);
 
-  frameRate(60 * max(min(1, timeScale), 0))
+  // frameRate(60 * max(min(1, timeScale), 0))
   
   document.body.style.cursor = "-webkit-grab"
   document.body.style.cursor = "grab"
@@ -50,10 +58,33 @@ function draw() {
 
   push();
   translate(gridOffset[0], gridOffset[1]);
+  scale(gridScale)
   drawGrid();
-  tiles.show()
+  if (timeScale >= 1) {
+    for (let i = 0; i < max(timeScale, 1); i++) {
+      tiles.show(true)
+    }
+  } else {
+    if (frameCount % (1 / timeScale) == 0) {
+      tiles.show(true)
+    } else {
+      tiles.show(false)
+    }
+  }
   buttons.show(true)
   pop();
+  push()
+  fill(COLORS.fadeGrass(0));
+  circle(10, 50, 20)
+  fill(COLORS.fadeGrass(0.25));
+  circle(10, 75, 20)
+  fill(COLORS.fadeGrass(0.5));
+  circle(10, 100, 20)
+  fill(COLORS.fadeGrass(0.75));
+  circle(10, 125, 20)
+  fill(COLORS.fadeGrass(1));
+  circle(10, 150, 20)
+  pop()
   ui.show()
   buttons.show(false)
 
@@ -80,12 +111,12 @@ function getOccurrence(array, value) {
 
 function mouseWheel(event) {
   gridScale += (event.delta * -0.01);
-  gridScale = constrain(gridScale, 0.5, 2);
+  gridScale = constrain(gridScale, 0.25, 2);
 }
 
 function drawGrid() {
-  let viewStart = [-gridOffset[0], -gridOffset[1]];
-  let viewEnd = [(viewStart[0] + width), (viewStart[1] + height)];
+  let viewStart = [-gridOffset[0] * (1 / gridScale), -gridOffset[1] * (1 / gridScale)];
+  let viewEnd = [(-gridOffset[0] + width) * (1 / gridScale), (-gridOffset[1] + height) * (1 / gridScale)];
   
   push();
   stroke(0);

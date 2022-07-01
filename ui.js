@@ -5,7 +5,7 @@ class UI {
 
     let smeButton = new Clickable(100, 20, "slower")
     smeButton.isHUD = true;
-    smeButton.onPress = () => {timeScale = max(timeScale / 4, 0.25)}
+    smeButton.onPress = () => {timeScale = 0.5}
     smeButton.onHover = () => {smeButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
     smeButton.text = "<<"
     smeButton.textSize = 10
@@ -14,7 +14,7 @@ class UI {
     
     let smButton = new Clickable(120, 20, "slow")
     smButton.isHUD = true;
-    smButton.onPress = () => {timeScale = max(timeScale / 2, 0.25)}
+    smButton.onPress = () => {timeScale = 0.75}
     smButton.onHover = () => {smButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
     smButton.text = "<"
     smButton.textSize = 10
@@ -32,7 +32,7 @@ class UI {
 
     let ffButton = new Clickable(160, 20, "fast")
     ffButton.isHUD = true;
-    ffButton.onPress = () => {timeScale *= 2}
+    ffButton.onPress = () => {timeScale = 2}
     ffButton.onHover = () => {ffButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
     ffButton.text = ">"
     ffButton.textSize = 10
@@ -41,12 +41,34 @@ class UI {
 
     let ffeButton = new Clickable(180, 20, "faster")
     ffeButton.isHUD = true;
-    ffeButton.onPress = () => {timeScale *= 4}
+    ffeButton.onPress = () => {timeScale = 8}
     ffeButton.onHover = () => {ffeButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
     ffeButton.text = ">>"
     ffeButton.textSize = 10
     ffeButton.width = 20
     ffeButton.height = 20
+
+    for (let i = 0; i < Object.keys(towerTypes).length; i++) {
+      let tempButton = new Clickable(width - 150, 100 + 50 * i, Object.keys(towerTypes)[i])
+      tempButton.isHUD = true;
+      tempButton.onPress = () => {towerToPlace = Object.keys(towerTypes)[i]}
+      tempButton.onHover = () => {tempButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
+      tempButton.onTick = () => {
+        tempButton.text = `${Object.keys(towerTypes)[i]} ($${towerTypes[Object.keys(towerTypes)[i]]["cost"]})`
+        tempButton.locate(width - 150, 100 + 50 * i)
+        if (towerToPlace == Object.keys(towerTypes)[i]) tempButton.color = "#777777";
+        if (coins < towerTypes[Object.keys(towerTypes)[i]]["cost"]) {
+          tempButton.color = "#999999";
+          tempButton.onHover = () => {tempButton.color = "#bbbbbb";document.body.style.cursor = "not-allowed"}
+        } else {
+          tempButton.onHover = () => {tempButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}}
+      }
+      tempButton.textSize = 10
+      tempButton.width = 150
+      tempButton.height = 50
+
+      buttons.buttons.push(tempButton)
+    }
 
     buttons.buttons.push(smeButton, smButton, rsButton, ffButton, ffeButton)
   }

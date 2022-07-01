@@ -119,6 +119,10 @@ class Clickable {
 		//then released outside this won't run.
 	}
 
+  onTick () {
+		//This function is run every tick
+	}
+
 	locate (x, y) {
 		this.x = x;
 		this.y = y;
@@ -164,6 +168,8 @@ class Clickable {
 	}
 
 	draw () {
+    this.onTick()
+    
 		push();
     rectMode(CORNER)
 		fill(this.color);
@@ -179,8 +185,14 @@ class Clickable {
 		textSize(this.textSize);
 		textFont(this.textFont);
 		text(this.text, this.x + this.width / 2, this.y + this.height / 2);
-    let localMouseX = mouseX - ((this.isHUD) ? 0 : gridOffset[0]);
-    let localMouseY = mouseY - ((this.isHUD) ? 0 : gridOffset[1]);
+    let localMouseX, localMouseY
+    if (this.isHUD) {
+      localMouseX = mouseX
+      localMouseY = mouseY
+    } else {
+      localMouseX = (mouseX - gridOffset[0]) * (1 / gridScale);
+      localMouseY = (mouseY - gridOffset[1]) * (1 / gridScale);
+    }
 		if (localMouseX >= this.x && localMouseY >= this.y
 			&& localMouseX < this.x + this.width && localMouseY < this.y + this.height) {
 			cl_lastHovered = this;

@@ -1,3 +1,5 @@
+var biomeScale = 75
+
 function tracePath(points) {
   noFill();
   beginShape();
@@ -9,9 +11,9 @@ function tracePath(points) {
   // Add join at center
   push()
   noStroke()
-  fill(COLORS["path"][0], COLORS["path"][1], COLORS["path"][2])
+  fill(COLORS.path)
   translate(points[points.length - 1][0] * CELL_WIDTH, points[points.length - 1][1] * CELL_WIDTH);
-  circle(0, 0, CELL_WIDTH / 2)
+  circle(0, 0, CELL_WIDTH * 0.75)
   pop()
 }
 
@@ -30,24 +32,38 @@ class Tile {
       this.tower = json["tower"]
       this.portal = json["portal"]
       this.path = json["path"]
+      this.origin = json["origin"]
     }
   }
 
   show() {
     push();
-    translate(this.location.x * TILE_SIZE, this.location.y * TILE_SIZE);
-    fill(COLORS["grass"][0], COLORS["grass"][1], COLORS["grass"][2]);
-    square(0, 0, TILE_SIZE);
-    translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
+    translate(this.location.x * TILE_SIZE - TILE_SIZE / 2, this.location.y * TILE_SIZE - TILE_SIZE / 2);
+    // translate(this.location.x * TILE_SIZE, this.location.y * TILE_SIZE);
+    // fill(COLORS.grass);
+    push()
+    rectMode(CORNER)
+    for (let i = 0; i < TILE_WIDTH; i++) {
+      for (let j = 0; j < TILE_WIDTH; j++) {
+        fill(COLORS.fadeGrass(noise((this.location.x * TILE_WIDTH + i) / biomeScale, (this.location.y * TILE_WIDTH + j) / biomeScale)));
+        square(i * CELL_WIDTH, j * CELL_WIDTH, CELL_WIDTH)
+      }
+    }
+    pop()
+    // square(0, 0, TILE_SIZE);
+    // translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
 
     push()
+    if (gridScale < 0.75) stroke(0, map(gridScale, 0.50, 0.75, 20, 255))
+    else stroke(0, 255)
+    
     for (let i = 1; i < 8; i++) line(0, i * CELL_WIDTH, 8 * CELL_WIDTH, i * CELL_WIDTH)
     for (let i = 1; i < 8; i++) line(i * CELL_WIDTH, 0, i * CELL_WIDTH, 8 * CELL_WIDTH)
     pop()
     
     push()
-    stroke(COLORS["path"][0], COLORS["path"][1], COLORS["path"][2]);
-    strokeWeight(CELL_WIDTH / 2);
+    stroke(COLORS.path);
+    strokeWeight(CELL_WIDTH * 0.75);
     if (this.top != undefined) tracePath(this.top.concat([this.center]));
     if (this.bottom != undefined) tracePath(this.bottom.concat([this.center]));
     if (this.left != undefined) tracePath(this.left.concat([this.center]));
@@ -58,14 +74,14 @@ class Tile {
       push();
       fill(0);
       noStroke();
-      circle(4 * CELL_WIDTH, 5.5 * CELL_WIDTH, CELL_WIDTH * 1.5);
+      circle(this.center[0] * CELL_WIDTH, this.center[1] * CELL_WIDTH, CELL_WIDTH);
       pop();
     }
     
     if (this.portal) {
       push();
-      fill(COLORS.portal[0], COLORS.portal[1], COLORS.portal[2]);
-      stroke(COLORS["path"][0], COLORS["path"][1], COLORS["path"][2]);
+      fill(COLORS.portal);
+      stroke(COLORS.path);
       strokeWeight(3)
       circle(this.center[0] * CELL_WIDTH, this.center[1] * CELL_WIDTH, CELL_WIDTH);
       pop();

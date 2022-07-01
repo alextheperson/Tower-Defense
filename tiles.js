@@ -5,6 +5,7 @@ class TileManager {
     let tempTile = {
       "location": [0,0],
       "center": [4, 5],
+      "origin": true,
       "tower": true,
       "top": [
         [start, 0],
@@ -12,7 +13,7 @@ class TileManager {
         [4, start2]
       ],
       "entrances": [],
-      "path": {"0,0":"tower"}
+      "path": {"0,0":"origin"}
     }
     this.tiles = [new Tile(this, [0, 0], tempTile)]
     this.coordTiles =  {"0,0": 0}
@@ -33,7 +34,7 @@ class TileManager {
 
   tile(x, y) {return (this.tiles[this.coordTiles[x+","+y]] == undefined) ? -1 : this.tiles[this.coordTiles[x+","+y]]}
 
-  show() {
+  show(physics) {
     this.entrances = []
     for (let i = 0; i < this.tiles.length; i++) {
       let entrances = this.isEntrance(this.tiles[i].location);
@@ -41,42 +42,34 @@ class TileManager {
       if (entrances.length > 0) this.entrances.push(i)
       this.tiles[i].show()
     }
-    
-    let mouseTile = [Math.round((mouseX - gridOffset[0]) / TILE_SIZE) * TILE_SIZE, Math.round((mouseY - gridOffset[1]) / TILE_SIZE) * TILE_SIZE]
-    let mouseCell = [Math.round((mouseX - gridOffset[0] + CELL_WIDTH / 2) / CELL_WIDTH) * CELL_WIDTH - CELL_WIDTH / 2, Math.round((mouseY - gridOffset[1] + CELL_WIDTH / 2) / CELL_WIDTH) * CELL_WIDTH - CELL_WIDTH / 2]
+
+    let relativeMousePos = [(mouseX - gridOffset[0]) * (1 / gridScale), (mouseY - gridOffset[1]) * (1 / gridScale)]
+    let mouseTile = [Math.round(relativeMousePos[0] / TILE_SIZE) * TILE_SIZE, Math.round(relativeMousePos[1] / TILE_SIZE) * TILE_SIZE]
+    let mouseCell = [Math.round((relativeMousePos[0] + CELL_WIDTH / 2) / CELL_WIDTH) * CELL_WIDTH - CELL_WIDTH / 2, Math.round((relativeMousePos[1] + CELL_WIDTH / 2) / CELL_WIDTH) * CELL_WIDTH - CELL_WIDTH / 2]
     let localCell = [((mouseCell[0] - mouseTile[0] + CELL_WIDTH / 2) + HALF_TILE_SIZE) / CELL_WIDTH - 1, ((mouseCell[1] - mouseTile[1] + CELL_WIDTH / 2) + HALF_TILE_SIZE) / CELL_WIDTH - 1]
-    let hoveredTile = this.tile(Math.round((mouseX - gridOffset[0]) / TILE_SIZE), Math.round((mouseY - gridOffset[1]) / TILE_SIZE))
+    let hoveredTile = this.tile(Math.round(relativeMousePos[0] / TILE_SIZE), Math.round(relativeMousePos[1] / TILE_SIZE))
     
     for (let i = 0; i < this.enemies.length; i++) {
-      if (this.enemies[i].health <= 0 || isNaN(this.enemies[i].health)) {
-        coins += this.enemies[i].difficulty
+      if (this.enemies[i].toClear) {
         this.enemies.splice(i, 1)
         this.spawnEnemies()
       } else {
-        this.enemies[i].show()
+        this.enemies[i].show(physics)
       }
     }
     
     for (let i = 0; i < this.projectiles.length; i++) {
-      if (dist(this.projectiles[i].originalPosition[0], this.projectiles[i].originalPosition[1], this.projectiles[i].x, this.projectiles[i].y) >= this.projectiles[i].range) {
+      if (this.projectiles[i].toClear) {
         this.projectiles.splice(i, 1)
       } else {
-        this.projectiles[i].show();
-        for (let j = 0; j < this.enemies.length; j++) {
-          if (dist(this.projectiles[i].x, this.projectiles[i].y, this.enemies[j].position[0], this.enemies[j].position[1]) <= this.enemies[j].size * CELL_WIDTH / 2) {
-            this.enemies[j].hurt(this.projectiles[i].dmg)
-            this.dealAreaDamage(this.projectiles[i].x, this.projectiles[i].y, this.projectiles[i].dmg, this.projectiles[i].dmgArea)
-            this.projectiles.splice(i, 1)
-            break
-          }
-        }
+        this.projectiles[i].show(physics)
       }
     }
 
     let isOnTower = false;
     
     for (let i = 0; i < this.towers.length; i++) {
-      this.towers[i].show()
+      this.towers[i].show(physics)
       if (mouseCell[0] == this.towers[i].x && mouseCell[1] == this.towers[i].y) isOnTower = true;
     }
 
@@ -86,15 +79,17 @@ class TileManager {
       push()
       noFill()
       strokeJoin(MITER)
-      if (!canPlaceTower) stroke(255, 0, 0, 150)
-      else stroke(255, 150)
+      if (canPlaceTower) stroke(255, 150)
+      else stroke(255, 0, 0, 150)
       strokeWeight(5);
       // square(mouseTile[0], mouseTile[1], TILE_SIZE - 6);
       square(mouseCell[0], mouseCell[1], CELL_WIDTH - 6)
+      this.towerPreview(mouseCell[0], mouseCell[1], towerToPlace, canPlaceTower)
       pop()
       if (canPlaceTower && mouseIsPressed && mouseButton === RIGHT) {
         coins -= towerTypes[towerToPlace].cost
         this.towers.push(new TOWER(mouseCell[0], mouseCell[1], this, towerTypes[towerToPlace]))
+        towerTypes[towerToPlace].cost = Math.round(towerTypes[towerToPlace].cost * 1.05)
         this.takenTiles.x.push(mouseCell[0])
         this.takenTiles.y.push(mouseCell[1])
       }
@@ -110,6 +105,26 @@ class TileManager {
         this.enemies[i].hurt(dmg)
       }
     }
+  }
+
+  towerPreview(x, y, tower, canPlaceTower) {
+    push()
+    if (canPlaceTower) fill(255, 150)
+    else fill(255, 0, 0, 150)
+    stroke(0)
+    strokeWeight(1)
+    translate(x, y)
+    rotate(frameCount / 100)
+    triangle(-CELL_WIDTH / towerTypes[tower]["width"], CELL_WIDTH / 2.4, CELL_WIDTH / towerTypes[tower]["width"], CELL_WIDTH / 2.4, 0, -CELL_WIDTH / 2.4)
+
+    if (canPlaceTower) {
+      // strokeWeight(2)
+      // noFill()
+      noStroke()
+      fill(255, 25)
+      circle(0, 0, towerTypes[tower]["range"] * 2)
+    }
+    pop()
   }
   
   isEntrance(pos, sides) {
@@ -128,7 +143,12 @@ class TileManager {
   }
   
   addTile(x, y) {
+    let isNewTower = (nthWave + 1) % 5 == 0;
     let tile = new Tile(this, [x, y])
+    if (isNewTower) {
+      nthWave += 1;
+      tile.tower = true;
+    }
     this.tiles.push(tile)
     this.coordTiles[x+","+y] = this.tiles.length - 1
     if (y < 0) this.numTiles[0] = max(this.numTiles[0], Math.abs(y) + 0.5)
@@ -137,7 +157,7 @@ class TileManager {
     if (x < 0) this.numTiles[2] = max(this.numTiles[2], Math.abs(x) + 0.5)
     if (x > 0) this.numTiles[3] = max(this.numTiles[3], Math.abs(x) + 0.5)
 
-    this.spawnWave()
+    if (!isNewTower) this.spawnWave()
   }
 
   spawnEnemies() {
@@ -157,7 +177,7 @@ class TileManager {
   }
 
   spawnWave() {
-    this.waveHardness = 2 ** nthWave
+    this.waveHardness = Math.round(2 ** (nthWave + Math.log2(5)))
     this.spawned = 0
     this.spawningWave = true
   }
