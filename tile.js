@@ -1,5 +1,3 @@
-var biomeScale = 75
-
 function tracePath(points) {
   noFill();
   beginShape();
@@ -45,8 +43,15 @@ class Tile {
     rectMode(CORNER)
     for (let i = 0; i < TILE_WIDTH; i++) {
       for (let j = 0; j < TILE_WIDTH; j++) {
-        fill(COLORS.fadeGrass(noise((this.location.x * TILE_WIDTH + i) / biomeScale, (this.location.y * TILE_WIDTH + j) / biomeScale)));
+        fill(COLORS.fadeGrassLoc(this.location.x * TILE_SIZE + i * CELL_WIDTH, this.location.y * TILE_SIZE + j * CELL_WIDTH));
         square(i * CELL_WIDTH, j * CELL_WIDTH, CELL_WIDTH)
+        // fill(255)
+        // rectMode(CENTER)
+        // textAlign(CENTER, CENTER)
+        // rect(this.location.x * TILE_WIDTH + i * CELL_WIDTH, this.location.y * TILE_WIDTH + j * CELL_WIDTH, 75, 10)
+        // fill(0)
+        // text((this.location.x * TILE_WIDTH + i * CELL_WIDTH) + ", " + (this.location.y * TILE_WIDTH + j * CELL_WIDTH), this.location.x * TILE_WIDTH + i * CELL_WIDTH, this.location.y * TILE_WIDTH + j * CELL_WIDTH)
+        // rectMode(CORNER)
       }
     }
     pop()

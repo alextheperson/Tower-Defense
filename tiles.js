@@ -75,6 +75,7 @@ class TileManager {
 
     if (hoveredTile != -1) {
       // console.log(towerToPlace, towerTypes[towerToPlace], towerTypes[towerToPlace].cost)
+      document.body.style.cursor = "none"
       let canPlaceTower = !(isOnTower || hoveredTile.onPath(localCell[0], localCell[1]) || coins < towerTypes[towerToPlace].cost)
       push()
       noFill()

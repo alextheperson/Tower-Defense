@@ -48,6 +48,16 @@ class UI {
     ffeButton.width = 20
     ffeButton.height = 20
 
+    let issuesButton = new Clickable(width - 100, height - 20, "faster")
+    issuesButton.isHUD = true;
+    issuesButton.onPress = () => {window.open("https://github.com/alextheperson/Tower-Defense/issues", '_blank');}
+    issuesButton.onHover = () => {issuesButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
+    issuesButton.onTick = () => {issuesButton.locate(width - 100, height - 20)}
+    issuesButton.text = "Report a bug (plz)"
+    issuesButton.textSize = 10
+    issuesButton.width = 100
+    issuesButton.height = 20
+
     for (let i = 0; i < Object.keys(towerTypes).length; i++) {
       let tempButton = new Clickable(width - 150, 100 + 50 * i, Object.keys(towerTypes)[i])
       tempButton.isHUD = true;
@@ -70,7 +80,7 @@ class UI {
       buttons.buttons.push(tempButton)
     }
 
-    buttons.buttons.push(smeButton, smButton, rsButton, ffButton, ffeButton)
+    buttons.buttons.push(smeButton, smButton, rsButton, ffButton, ffeButton, issuesButton)
   }
 
   show () {

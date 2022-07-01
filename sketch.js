@@ -72,6 +72,10 @@ function draw() {
     }
   }
   buttons.show(true)
+
+  fill(COLORS.fadeGrassLoc((mouseX - gridOffset[0]) / gridScale + TILE_SIZE / 2, (mouseY - gridOffset[1]) / gridScale + TILE_SIZE / 2))
+  circle((mouseX - gridOffset[0]) / gridScale, (mouseY - gridOffset[1]) / gridScale - 15, 10)
+  text(`${Math.round((mouseX - gridOffset[0]) / gridScale + TILE_SIZE / 2)}, ${Math.round((mouseY - gridOffset[1]) / gridScale + TILE_SIZE / 2)}`, (mouseX - gridOffset[0]) / gridScale, (mouseY - gridOffset[1]) / gridScale + 15)
   pop();
   push()
   fill(COLORS.fadeGrass(0));

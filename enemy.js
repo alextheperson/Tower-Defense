@@ -4,7 +4,7 @@ oppositeSides = {"top": "bottom", "bottom": "top", "left": "right", "right": "le
 enemyTypes = [
   {
     "name": "tank",
-    "health": 2,
+    "health": 5,
     "speed": 0.5,
     "damage": 1.5,
     "size": 1.3,
