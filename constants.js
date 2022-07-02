@@ -103,25 +103,3 @@ function randBool() {
 function randInt(min, max) {
   return Math.floor(random(min, max))
 }
-
-function drawShape(shapes) {
-  for (let s = 0; s < shapes.length; s++) {
-    push()
-    let shape = shapes[s]
-    if (shape["noFill"]) noFill()
-    else fill(shape["fill"])
-    if (shape["noStroke"]) noStroke()
-    else {
-      stroke(shape["stroke"])
-      strokeWeight(shape["strokeWeight"])
-      strokeJoin(shape["strokeJoin"])
-    }
-    beginShape()
-    for (let m = 0; m < shape["moves"].length; m++) {
-      let move = shape["moves"][m]
-      vertex()
-    }
-    endShape()
-    pop()
-  }
-}

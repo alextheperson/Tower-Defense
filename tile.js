@@ -78,23 +78,6 @@ class Tile {
     if (this.left != undefined) tracePath(this.location.x, this.location.y, this.left.concat([this.center]));
     if (this.right != undefined) tracePath(this.location.x, this.location.y, this.right.concat([this.center]));
     pop()
-    
-    if (this.tower) {
-      push();
-      fill(0);
-      noStroke();
-      circle(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2, CELL_WIDTH);
-      pop();
-    }
-    
-    if (this.portal) {
-      push();
-      fill(COLORS.portal);
-      stroke(COLORS.path);
-      strokeWeight(3)
-      circle(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2, CELL_WIDTH);
-      pop();
-    }
 
     push()
     if (gridScale < 0.5) {
@@ -110,6 +93,43 @@ class Tile {
     for (let i = 0; i < 9; i++) line(0, i * CELL_WIDTH, 8 * CELL_WIDTH, i * CELL_WIDTH)
     for (let i = 0; i < 9; i++) line(i * CELL_WIDTH, 0, i * CELL_WIDTH, 8 * CELL_WIDTH)
     pop()
+    
+    if (this.tower) {
+      push();
+      fill(100)
+      strokeWeight(2 / CELL_WIDTH)
+      stroke(0)
+      translate(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2)
+      scale(CELL_WIDTH)
+      beginShape()
+      vertex(0.75, -1)
+      vertex(0.75, -1.25)
+      vertex(1.25, -1.25)
+      vertex(1.25, 1.25)
+      vertex(-1.25, 1.25)
+      vertex(-1.25, -1.25)
+      vertex(-0.75, -1.25)
+      vertex(-0.75, -1)
+      vertex(-1, -1)
+      vertex(-1, 1)
+      vertex(1, 1)
+      vertex(1, -1)
+      endShape(CLOSE)
+      circle(-1.15, -1.15, 0.5)
+      circle(1.15, -1.15, 0.5)
+      circle(1.15, 1.15, 0.5)
+      circle(-1.15, 1.15, 0.5)
+      pop();
+    }
+    
+    if (this.portal) {
+      push();
+      fill(COLORS.portal);
+      stroke(COLORS.path);
+      strokeWeight(3)
+      circle(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2, CELL_WIDTH);
+      pop();
+    }
     pop()
   }
 
@@ -122,7 +142,7 @@ class Tile {
         let nextPos = tempPath[i+1]
         if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
-            }
+        }
       }
     }
     if (this.bottom) {
@@ -132,7 +152,7 @@ class Tile {
         let nextPos = tempPath[i+1]
         if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
-            }
+        }
       }
     }
     if (this.left) {
@@ -142,7 +162,7 @@ class Tile {
         let nextPos = tempPath[i+1]
         if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
-            }
+        }
       }
     }
     if (this.right) {
@@ -152,7 +172,12 @@ class Tile {
         let nextPos = tempPath[i+1]
         if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
-            }
+        }
+      }
+    }
+    if (this.tower) {
+      if (x <= this.center[0] + 1 && x >= this.center[0] - 1 && y <= this.center[1] + 1 && y >= this.center[1] - 1) {
+        isOn = true;
       }
     }
     return isOn;
