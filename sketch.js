@@ -5,5 +5,5 @@ function setup() {
   COLORS.init()
   mgr = new SceneManager();
   mgr.wire()
-  mgr.showScene(game);
+  mgr.showScene(start);
 }
