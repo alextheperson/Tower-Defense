@@ -144,7 +144,7 @@ class TileManager {
   }
   
   addTile(x, y) {
-    let isNewTower = (nthWave + 1) % 5 == 0;
+    let isNewTower = false //(nthWave + 1) % 5 == 0;
     let tile = new Tile(this, [x, y])
     if (isNewTower) {
       nthWave += 1;

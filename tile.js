@@ -96,20 +96,21 @@ class Tile {
     
     if (this.tower) {
       push();
+      translate(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2)
+      scale(CELL_WIDTH)
+      
       fill(100)
       strokeWeight(2 / CELL_WIDTH)
       stroke(0)
-      translate(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2)
-      scale(CELL_WIDTH)
       beginShape()
-      vertex(0.75, -1)
-      vertex(0.75, -1.25)
+      vertex(0.25, -1)
+      vertex(0.25, -1.25)
       vertex(1.25, -1.25)
       vertex(1.25, 1.25)
       vertex(-1.25, 1.25)
       vertex(-1.25, -1.25)
-      vertex(-0.75, -1.25)
-      vertex(-0.75, -1)
+      vertex(-0.25, -1.25)
+      vertex(-0.25, -1)
       vertex(-1, -1)
       vertex(-1, 1)
       vertex(1, 1)

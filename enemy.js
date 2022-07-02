@@ -100,15 +100,28 @@ class Enemy {
       rect(this.position[0], this.position[1] + 12.5, map(this.health, 0, this.maxHealth, 0, CELL_WIDTH), 5)
       pop()
     } else {
-      if (this.age <= 10) {
-        push()
-        fill(this.color[0], this.color[1], this.color[2])
-        noStroke()
-        circle(this.position[0], this.position[1], (CELL_WIDTH / 2 * this.size) - ((-(CELL_WIDTH / 2 * this.size) / 100) * (this.age - 10) ** 2 + (CELL_WIDTH / 2 * this.size)))
-        pop()
-        this.age += 1;
-      } else {
-        this.toClear = true;
+      if (this.deathCause == "tower") {
+        if (this.age <= 10) {
+          push()
+          fill(this.color[0], this.color[1], this.color[2])
+          noStroke()
+          circle(this.position[0], this.position[1], (CELL_WIDTH / 2 * this.size) - ((-(CELL_WIDTH / 2 * this.size) / 100) * (this.age - 10) ** 2 + (CELL_WIDTH / 2 * this.size)))
+          pop()
+          this.age += 1;
+        } else {
+          this.toClear = true;
+        }
+      } else if (this.deathCause == "end") {
+        if (this.age <= 30) {
+          push()
+          fill(255, 100, 100, -17 / 60 * this.age ** 2 + 255)
+          noStroke()
+          circle(this.position[0], this.position[1], 1 / 255 * this.age ** 2 * CELL_WIDTH)
+          pop()
+          this.age += 1;
+        } else {
+          this.toClear = true;
+        }
       }
     }
   }
@@ -124,6 +137,7 @@ class Enemy {
         else {
           this.isSimulating = false
           health -= this.damage
+          this.deathCause = "end"
         }
       } else {
         if (dist(this.coordinatePath[this.pathProgress][0], this.coordinatePath[this.pathProgress][1], this.coordinatePath[this.pathProgress + 1][0], this.coordinatePath[this.pathProgress + 1][1]) == 0) {
@@ -148,6 +162,7 @@ class Enemy {
       coins += this.difficulty
       // coins += 1
       this.isSimulating = false;
+      this.deathCause = "tower"
       // this.toClear = true;
     }
   }
