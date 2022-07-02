@@ -7,7 +7,7 @@ enemyTypes = [
     "health": 5,
     "speed": 0.5,
     "damage": 1.5,
-    "size": 1.3,
+    "size": 1.5,
     "color": [150, 150, 150],
     "difficulty": 7
   },
@@ -58,14 +58,14 @@ class Enemy {
       if (!currentTile.portal) {
         // console.log(side, currentTile, this.paths, this.path)
         for (let j = 0; j < currentTile[side].length; j++) {
-          this.coordinatePath.push([currentTile[side][j][0] * CELL_WIDTH + currentTile.location.x * TILE_SIZE, currentTile[side][j][1] * CELL_WIDTH + currentTile.location.y * TILE_SIZE])
+          this.coordinatePath.push([currentTile[side][j][0] * CELL_WIDTH + currentTile.location.x * TILE_SIZE + CELL_WIDTH / 2, currentTile[side][j][1] * CELL_WIDTH + currentTile.location.y * TILE_SIZE + CELL_WIDTH / 2])
         }
       }
-      this.coordinatePath.push([currentTile["center"][0] * CELL_WIDTH + currentTile.location.x * TILE_SIZE, currentTile["center"][1] * CELL_WIDTH + currentTile.location.y * TILE_SIZE])
+      this.coordinatePath.push([currentTile["center"][0] * CELL_WIDTH + currentTile.location.x * TILE_SIZE + CELL_WIDTH / 2, currentTile["center"][1] * CELL_WIDTH + currentTile.location.y * TILE_SIZE + CELL_WIDTH / 2])
       if (!currentTile.origin) {
         let secondPath = Array.from(currentTile[this.paths[2]]).reverse()
         for (let j = 0; j < secondPath.length; j++) {
-          this.coordinatePath.push([secondPath[j][0] * CELL_WIDTH + currentTile.location.x * TILE_SIZE, secondPath[j][1] * CELL_WIDTH + currentTile.location.y * TILE_SIZE])
+          this.coordinatePath.push([secondPath[j][0] * CELL_WIDTH + currentTile.location.x * TILE_SIZE + CELL_WIDTH / 2, secondPath[j][1] * CELL_WIDTH + currentTile.location.y * TILE_SIZE + CELL_WIDTH / 2])
         }
       }
       side = oppositeSides[nextSide]

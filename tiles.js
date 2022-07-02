@@ -1,7 +1,7 @@
 class TileManager {
   constructor () {
-    let start = Math.round(Math.random() * 6 + 1)
-    let start2 = Math.round(Math.random() * 3 + 1)
+    let start = randInt(7)
+    let start2 = randInt(4)
     let tempTile = {
       "location": [0,0],
       "center": [4, 5],
@@ -163,9 +163,9 @@ class TileManager {
 
   spawnEnemies() {
     if (this.spawningWave) {
-      let tile = this.tiles[this.entrances[Math.floor((Math.random()*this.entrances.length))]]
+      let tile = this.tiles[random(this.entrances)]
       let entranceNames = this.isEntrance(tile.location, true)
-      let enemy = new Enemy(this, tile.path, entranceNames[Math.floor((Math.random()*entranceNames.length))])
+      let enemy = new Enemy(this, tile.path, random(entranceNames))
       this.spawned += enemy.difficulty;
       this.enemies.push(enemy)
 

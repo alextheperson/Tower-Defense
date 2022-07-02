@@ -1,17 +1,30 @@
-function tracePath(points) {
-  noFill();
-  beginShape();
-  for (let i = 0; i < points.length; i++) {
-    let currTile = points[i];
-    vertex(currTile[0] * CELL_WIDTH, currTile[1] * CELL_WIDTH);
-  }
-  endShape();
-  // Add join at center
+function tracePath(x, y, points) {
   push()
+  // stroke(COLORS.path(0, 0));
+  // strokeWeight(CELL_WIDTH * 0.75);
+  // noFill();
+  // beginShape();
+  // for (let i = 0; i < points.length; i++) {
+  //   let currTile = points[i];
+  //   vertex(currTile[0] * CELL_WIDTH + CELL_WIDTH / 2, currTile[1] * CELL_WIDTH + CELL_WIDTH / 2);
+  // }
+  // endShape()
+  rectMode(CORNER)
   noStroke()
-  fill(COLORS.path)
-  translate(points[points.length - 1][0] * CELL_WIDTH, points[points.length - 1][1] * CELL_WIDTH);
-  circle(0, 0, CELL_WIDTH * 0.75)
+  for (let i = 0; i < points.length - 1; i++) {
+    let currTile = points[i];
+    let nextTile = points[i + 1];
+    let deltaX = nextTile[0] - currTile[0]
+    let deltaY = nextTile[1] - currTile[1]
+
+    // console.log(deltaX, deltaY)
+    
+    for (let j = 0; j < max(Math.abs(deltaX), Math.abs(deltaY)) + 1; j++) {
+      fill(COLORS.path((currTile[0] + Math.sign(deltaX) * j) * CELL_WIDTH + x * TILE_SIZE, (currTile[1] + Math.sign(deltaY) * j) * CELL_WIDTH + y * TILE_SIZE));
+      square((currTile[0] + Math.sign(deltaX) * j) * CELL_WIDTH, (currTile[1] + Math.sign(deltaY) * j) * CELL_WIDTH, CELL_WIDTH)
+      // console.log((currTile[0] + Math.sign(deltaX)), (currTile[1] + Math.sign(deltaY)))
+    }
+  }
   pop()
 }
 
@@ -40,10 +53,11 @@ class Tile {
     // translate(this.location.x * TILE_SIZE, this.location.y * TILE_SIZE);
     // fill(COLORS.grass);
     push()
+    noStroke()
     rectMode(CORNER)
     for (let i = 0; i < TILE_WIDTH; i++) {
       for (let j = 0; j < TILE_WIDTH; j++) {
-        fill(COLORS.fadeGrassLoc(this.location.x * TILE_SIZE + i * CELL_WIDTH, this.location.y * TILE_SIZE + j * CELL_WIDTH));
+        fill(COLORS.grass(this.location.x * TILE_SIZE + i * CELL_WIDTH, this.location.y * TILE_SIZE + j * CELL_WIDTH));
         square(i * CELL_WIDTH, j * CELL_WIDTH, CELL_WIDTH)
         // fill(255)
         // rectMode(CENTER)
@@ -57,29 +71,19 @@ class Tile {
     pop()
     // square(0, 0, TILE_SIZE);
     // translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
-
-    push()
-    if (gridScale < 0.75) stroke(0, map(gridScale, 0.50, 0.75, 20, 255))
-    else stroke(0, 255)
-    
-    for (let i = 1; i < 8; i++) line(0, i * CELL_WIDTH, 8 * CELL_WIDTH, i * CELL_WIDTH)
-    for (let i = 1; i < 8; i++) line(i * CELL_WIDTH, 0, i * CELL_WIDTH, 8 * CELL_WIDTH)
-    pop()
     
     push()
-    stroke(COLORS.path);
-    strokeWeight(CELL_WIDTH * 0.75);
-    if (this.top != undefined) tracePath(this.top.concat([this.center]));
-    if (this.bottom != undefined) tracePath(this.bottom.concat([this.center]));
-    if (this.left != undefined) tracePath(this.left.concat([this.center]));
-    if (this.right != undefined) tracePath(this.right.concat([this.center]));
+    if (this.top != undefined) tracePath(this.location.x, this.location.y, this.top.concat([this.center]));
+    if (this.bottom != undefined) tracePath(this.location.x, this.location.y, this.bottom.concat([this.center]));
+    if (this.left != undefined) tracePath(this.location.x, this.location.y, this.left.concat([this.center]));
+    if (this.right != undefined) tracePath(this.location.x, this.location.y, this.right.concat([this.center]));
     pop()
     
     if (this.tower) {
       push();
       fill(0);
       noStroke();
-      circle(this.center[0] * CELL_WIDTH, this.center[1] * CELL_WIDTH, CELL_WIDTH);
+      circle(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2, CELL_WIDTH);
       pop();
     }
     
@@ -88,9 +92,24 @@ class Tile {
       fill(COLORS.portal);
       stroke(COLORS.path);
       strokeWeight(3)
-      circle(this.center[0] * CELL_WIDTH, this.center[1] * CELL_WIDTH, CELL_WIDTH);
+      circle(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2, CELL_WIDTH);
       pop();
     }
+
+    push()
+    if (gridScale < 0.5) {
+      noStroke()
+    } else if (gridScale < 0.75) {
+      strokeWeight(1)
+      stroke(0, map(gridScale, 0.5, 0.75, 20, 255))
+    } else {
+      strokeWeight(2)
+      stroke(0, 255)
+    }
+    
+    for (let i = 0; i < 9; i++) line(0, i * CELL_WIDTH, 8 * CELL_WIDTH, i * CELL_WIDTH)
+    for (let i = 0; i < 9; i++) line(i * CELL_WIDTH, 0, i * CELL_WIDTH, 8 * CELL_WIDTH)
+    pop()
     pop()
   }
 
@@ -101,7 +120,7 @@ class Tile {
       for (let i = 0; i < tempPath.length - 1; i++) {
         let currPos = tempPath[i]
         let nextPos = tempPath[i+1]
-        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
             }
       }
@@ -111,7 +130,7 @@ class Tile {
       for (let i = 0; i < tempPath.length - 1; i++) {
         let currPos = tempPath[i]
         let nextPos = tempPath[i+1]
-        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
             }
       }
@@ -121,7 +140,7 @@ class Tile {
       for (let i = 0; i < tempPath.length - 1; i++) {
         let currPos = tempPath[i]
         let nextPos = tempPath[i+1]
-        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
             }
       }
@@ -131,7 +150,7 @@ class Tile {
       for (let i = 0; i < tempPath.length - 1; i++) {
         let currPos = tempPath[i]
         let nextPos = tempPath[i+1]
-        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) - 1 && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1]) - 1) {
+        if (x <= max(currPos[0], nextPos[0]) && x >= min(currPos[0], nextPos[0]) && y <= max(currPos[1], nextPos[1]) && y >= min(currPos[1], nextPos[1])) {
           isOn = true;
             }
       }
@@ -142,7 +161,7 @@ class Tile {
   generateTile(x, y) {
     let neighbors = [this.tiles.tile(x, y - 1), this.tiles.tile(x, y + 1), this.tiles.tile(x - 1, y), this.tiles.tile(x + 1, y)]
     let neighborPaths = [neighbors[0]["bottom"] != undefined, neighbors[1]["top"] != undefined, neighbors[2]["right"] != undefined, neighbors[3]["left"] != undefined]
-    let center = [Math.round(Math.random() * 6) + 1, Math.round(Math.random() * 6) + 1]
+    let center = [randInt(1, 7), randInt(1, 7)]
   
     this.center = center
 
@@ -153,45 +172,46 @@ class Tile {
     do {
       if (neighborPaths[0]) {
         this.top = [[neighbors[0].bottom[0][0], 0]]
-        this.top[1] = [this.top[0][0], Math.round(map(Math.random(), 0, 1, this.top[0][1] + 1, center[1]))]
+        this.top[1] = [this.top[0][0], randInt(this.top[0][1] + 1, center[1])]
         this.top[2] = [center[0], this.top[1][1]]
         numRequiredPaths += 1;
       } else if (randBool() && neighbors[0] == -1) {
-        this.top = [[Math.round(Math.random() * 6 + 1), 0]]
-        this.top[1] = [this.top[0][0], Math.round(map(Math.random(), 0, 1, this.top[0][1] + 1, center[1]))]
+        this.top = [[randInt(0, 7), 0]]
+        this.top[1] = [this.top[0][0], randInt(this.top[0][1] + 1, center[1])]
         this.top[2] = [center[0], this.top[1][1]]
         hasSecondPath = true;
       }
       if (neighborPaths[1]) {
-        this.bottom = [[neighbors[1].top[0][0], 8]]
-        this.bottom[1] = [this.bottom[0][0], Math.round(map(Math.random(), 0, 1, this.bottom[0][1] - 1, center[1]))]
+        this.bottom = [[neighbors[1].top[0][0], 7]]
+        this.bottom[1] = [this.bottom[0][0], randInt(this.bottom[0][1] - 1, center[1])]
         this.bottom[2] = [center[0], this.bottom[1][1]]
         numRequiredPaths += 1;
       } else if (randBool() && neighbors[1] == -1) {
-        this.bottom = [[Math.round(Math.random() * 6 + 1), 8]]
-        this.bottom[1] = [this.bottom[0][0], Math.round(map(Math.random(), 0, 1, this.bottom[0][1] - 1, center[1]))]
+        this.bottom = [[randInt(0, 7), 7]]
+        this.bottom[1] = [this.bottom[0][0], randInt(this.bottom[0][1] - 1, center[1])]
         this.bottom[2] = [center[0], this.bottom[1][1]]
         hasSecondPath = true;
       }
       if (neighborPaths[2]) {
         this.left = [[0, neighbors[2].right[0][1]]]
-        this.left[1] = [Math.round(map(Math.random(), 0, 1, this.left[0][0] + 1, center[0])), this.left[0][1]]
+        // this.left[1] = [Math.round(map(Math.random(), 0, 1, this.left[0][0] + 1, center[0])), this.left[0][1]]
+        this.left[1] = [randInt(this.left[0][0] + 1, center[0]), this.left[0][1]]
         this.left[2] = [this.left[1][0], center[1]]
         numRequiredPaths += 1;
       } else if (randBool() && neighbors[2] == -1) {
-        this.left = [[0, Math.round(Math.random() * 6 + 1)]]
-        this.left[1] = [Math.round(map(Math.random(), 0, 1, this.left[0][0] + 1, center[0])), this.left[0][1]]
+        this.left = [[0, randInt(0, 7)]]
+        this.left[1] = [randInt(this.left[0][0] + 1, center[0]), this.left[0][1]]
         this.left[2] = [this.left[1][0], center[1]]
         hasSecondPath = true;
       }
       if (neighborPaths[3]) {
-        this.right = [[8, neighbors[3].left[0][1]]]
-        this.right[1] = [Math.round(map(Math.random(), 0, 1, this.right[0][0] - 1, center[0])), this.right[0][1]]
+        this.right = [[7, neighbors[3].left[0][1]]]
+        this.right[1] = [randInt(this.right[0][0] - 1, center[0]), this.right[0][1]]
         this.right[2] = [this.right[1][0], center[1]]
         numRequiredPaths += 1;
       } else if (randBool() && neighbors[3] == -1) {
-        this.right = [[8, Math.round(Math.random() * 6 + 1)]]
-        this.right[1] = [Math.round(map(Math.random(), 0, 1, this.right[0][0] - 1, center[0])), this.right[0][1]]
+        this.right = [[7, randInt(0, 7)]]
+        this.right[1] = [randInt(this.right[0][0] - 1, center[0]), this.right[0][1]]
         this.right[2] = [this.right[1][0], center[1]]
         hasSecondPath = true;
       }
