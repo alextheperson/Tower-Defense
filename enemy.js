@@ -45,7 +45,7 @@ class Enemy {
     this.path = [Object.keys(restOfPath)[0].split(",")]
     let pathLeft = restOfPath[Object.keys(restOfPath)[0]]
     while (true) {
-      let nextTile = pathLeft[Math.floor((Math.random()*pathLeft.length))];
+      let nextTile = random(pathLeft);
       this.path.push(Object.keys(nextTile)[0].split(","))
       pathLeft = Object.values(nextTile)[0]
       if (Object.values(nextTile)[0] === "origin") break
@@ -79,7 +79,7 @@ class Enemy {
     this.toClear = false;
     this.age = 0;
 
-    this.type = enemyTypes[Object.keys(enemyTypes)[Math.floor((Math.random()*Object.keys(enemyTypes).length))]]
+    this.type = enemyTypes[random(Object.keys(enemyTypes))]
     this.color = this.type.color
     this.size = this.type.size
     this.damage = this.type.damage

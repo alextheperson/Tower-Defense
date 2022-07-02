@@ -167,5 +167,10 @@ class UI {
     stroke(0)
     circle(0, 40, 18)
     pop()
+
+    push()
+    textAlign(RIGHT, BOTTOM)
+    text(`Random Seed: ${seeds[0]}, Noise Seed: ${seeds[1]},\nUnused Seed 1: ${seeds[2]}, Unused Seed 2: ${seeds[3]}`, width - 125, height)
+    pop()
   }
 }

@@ -1,3 +1,5 @@
+var portalChunks = [0]
+
 function tracePath(x, y, points) {
   push()
   // stroke(COLORS.path(0, 0));
@@ -99,7 +101,7 @@ class Tile {
       translate(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2)
       scale(CELL_WIDTH)
       
-      fill(100)
+      fill(COLORS.stoneColors[3])
       strokeWeight(2 / CELL_WIDTH)
       stroke(0)
       beginShape()
@@ -116,19 +118,38 @@ class Tile {
       vertex(1, 1)
       vertex(1, -1)
       endShape(CLOSE)
+      fill(COLORS.stoneColors[4])
       circle(-1.15, -1.15, 0.5)
+      fill(COLORS.stoneColors[12])
       circle(1.15, -1.15, 0.5)
+      fill(COLORS.stoneColors[9])
       circle(1.15, 1.15, 0.5)
+      fill(COLORS.stoneColors[16])
       circle(-1.15, 1.15, 0.5)
       pop();
     }
     
     if (this.portal) {
       push();
-      fill(COLORS.portal);
-      stroke(COLORS.path);
-      strokeWeight(3)
-      circle(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2, CELL_WIDTH);
+      translate(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2)
+      scale(CELL_WIDTH)
+      //rotates the portal to the appropriate angle
+      //0 -> top 0.5 -> right 1 -> bottom 1.5 -> left
+      if (this.right) rotate(HALF_PI)
+      if (this.bottom) rotate(PI)
+      if (this.left) rotate(1.5 * PI)
+      
+      fill(100)
+      stroke(0)
+      strokeJoin(BEVEL)
+      strokeWeight(2 / CELL_WIDTH)
+      for (let i = 1; i < portalChunks.length; i++) {
+        fill(COLORS.stoneColors[i + 5]);
+        arc(0, 0, 1.75, 1.5, portalChunks[i - 1], portalChunks[i], PIE);
+      }
+      
+      fill(50)
+      arc(0, 0, 1.25, 1, 0, PI, PIE)
       pop();
     }
     pop()

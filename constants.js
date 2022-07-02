@@ -21,13 +21,19 @@ class colors {
     this.black1 = color(31, 3, 3)
     this.black2 = color(5, 3, 31)
     this.portal = color(200, 100, 255)
+
+    this.stoneColors = []
+    for (let i = 0; i < 20; i++) {
+      let shade = random(70, 130)
+      this.stoneColors[i] = color(shade + random(-10, 10), shade + random(-5, 5), shade + random(-10, 10))
+    }
   }
 
   path(x, y) {
     let biome = noise(x / BIOME_SCALE, y / BIOME_SCALE)
-    if (biome <= 0.6) {
+    if (biome <= 0.55) {
       return lerpColor(this.path1, this.path3, noise(x / VARIATION_SCALE, y / VARIATION_SCALE))
-    } else if (biome <= 0.4) {
+    } else if (biome <= 0.45) {
       return lerpColor(this.path1, this.path2, noise(x / VARIATION_SCALE, y / VARIATION_SCALE))
     } else {
       return this.path1
@@ -97,7 +103,7 @@ function getOccurrence(array, value) {
 }
 
 function randBool() {
-  return Math.random() > 0.5
+  return random() > 0.5
 }
 
 function randInt(min, max) {

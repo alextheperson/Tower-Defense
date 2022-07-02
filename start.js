@@ -8,8 +8,9 @@ function start() {
     background(255);
 
     push()
-    for (let y = ((frameCount / 20) % CELL_WIDTH) - CELL_WIDTH; y < height + CELL_WIDTH; y += CELL_WIDTH) {
-      for (let x = ((frameCount / 10) % CELL_WIDTH) - CELL_WIDTH; x < width + CELL_WIDTH; x += CELL_WIDTH) {
+    strokeWeight(2)
+    for (let y = Math.floor((mouseY / 10 + frameCount / (noise(frameCount / 1000, 0) * 10)) % CELL_WIDTH) - CELL_WIDTH; y < height + CELL_WIDTH; y += CELL_WIDTH) {
+      for (let x = Math.floor((mouseX / 10 + frameCount / (noise(frameCount / 1000, 0) * 10)) % CELL_WIDTH) - CELL_WIDTH; x < width + CELL_WIDTH; x += CELL_WIDTH) {
         fill(COLORS.start(x, y))
         square(x, y, CELL_WIDTH)
       }
@@ -21,10 +22,10 @@ function start() {
     rectMode(CENTER)
     noStroke()
     fill(255, 100)
-    rect(width / 2, height / 2 - 10, 350, 100)
+    rect(width / 2, height / 2 - 10, 300, 100)
     fill(0)
     textSize(50)
-    text("Tower Defense", width / 2, height / 2 - 20)
+    text("Tile Defense", width / 2, height / 2 - 20)
     textSize(10)
     text("Press Any Key To Play...", width / 2, height / 2 + 20)
     pop()

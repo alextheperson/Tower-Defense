@@ -51,7 +51,7 @@ var towerTypes = {
       "range": 250,
     },
     "cost": 200,
-    "width": 8
+    "width": 4
   }
 }
 
@@ -132,7 +132,7 @@ class TOWER {
   fire() {
     for (let i = 0; i < this.targets.length; i++) {
       let dir = Math.atan2(this.targets[i].position[1] - this.y, this.targets[i].position[0] - this.x)
-      dir += map(Math.random(), 0, 0.9, -this.accuracy, this.accuracy)
+      dir += random(-this.accuracy, this.accuracy)
       // console.log(dir)
       let fuse = -1
       if (this.fused) fuse = dist(this.x, this.y, this.targets[i].position[0], this.targets[i].position[1])
