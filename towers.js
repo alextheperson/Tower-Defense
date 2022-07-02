@@ -29,7 +29,7 @@ var towerTypes = {
       "shape": "circle",
       "size": 10,
       "speed": 5,
-      "damage": 10,
+      "damage": 15,
       "area": 25,
       "range": 250,
     },
@@ -39,7 +39,7 @@ var towerTypes = {
   "Fused Cannon Tower": {
     "maxTargets": 1,
     "range": 250,
-    "fireRate": 10/3,
+    "fireRate": 5/3,
     "accuracy": 0.2,
     "fused": true,
     "projectile": {

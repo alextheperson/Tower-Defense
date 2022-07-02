@@ -9,8 +9,8 @@ function died() {
 
     push()
     strokeWeight(2)
-    for (let y = Math.floor((mouseY / 10 + frameCount / (noise(frameCount / 1000, 0) * 10)) % CELL_WIDTH) - CELL_WIDTH; y < height + CELL_WIDTH; y += CELL_WIDTH) {
-      for (let x = Math.floor((mouseX / 10 + frameCount / (noise(frameCount / 1000, 0) * 10)) % CELL_WIDTH) - CELL_WIDTH; x < width + CELL_WIDTH; x += CELL_WIDTH) {
+    for (let y = Math.floor((mouseY / 10 + frameCount / 2) % CELL_WIDTH) - CELL_WIDTH; y < height + CELL_WIDTH; y += CELL_WIDTH) {
+      for (let x = Math.floor((mouseX / 10 + frameCount / 5) % CELL_WIDTH) - CELL_WIDTH; x < width + CELL_WIDTH; x += CELL_WIDTH) {
         fill(COLORS.death(x, y))
         square(x, y, CELL_WIDTH)
       }
