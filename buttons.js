@@ -70,12 +70,14 @@ class ButtonManager {
       }, false, () => {
         buttons.buttons[buttons.getButtonById(id)].color = "#bbbbbb";
         document.body.style.cursor = `${tcd}-resize`
-        if (this.spawningWave || tiles.enemies.length > 0) document.body.style.cursor = "progress"
+      }, () => {
+        if (this.spawningWave || tiles.enemies.length > 0) buttons.buttons[buttons.getButtonById(id)].show = false;
+        else buttons.buttons[buttons.getButtonById(id)].show = true;
       })
     }
   }
 
-  addButton(x, y, id, onclick, isHUD, onHover) {
+  addButton(x, y, id, onclick, isHUD, onHover, onTick) {
     let ids = [];
     for (let i = 0; i < this.buttons.length; i++) {
       ids.push(this.buttons[i].id);
@@ -84,14 +86,17 @@ class ButtonManager {
         this.buttons[i].onPress = onclick;
         this.buttons[i].isHUD = isHUD;
         this.buttons[i].onHover = onHover;
+        this.buttons[i].onTick = onTick;
         break;
       }
     }
     if (ids.indexOf(id) == -1) {
-      let newButton = new Clickable(x, y, id);
+      let newButton = new Clickable(x, y, CELL_WIDTH, CELL_WIDTH, id, "+");
       newButton.isHUD = isHUD;
       newButton.onPress = onclick;
-      newButton.onHover = onHover
+      newButton.onHover = onHover;
+      newButton.onTick = onTick;
+      newButton.textSize = 24;
       this.buttons.push(newButton);
     }
   }

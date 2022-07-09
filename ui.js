@@ -3,63 +3,46 @@ class UI {
     this.enemyTypes = enemyTypes
     this.buttons = buttons
 
-    let smeButton = new Clickable(100, 20, "slower")
+    let smeButton = new Clickable(100, 20, 20, 20, "slower", "<<")
     smeButton.isHUD = true;
     smeButton.onPress = () => {timeScale = 0.5}
     smeButton.onHover = () => {smeButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
-    smeButton.text = "<<"
     smeButton.textSize = 10
-    smeButton.width = 20
-    smeButton.height = 20
     
-    let smButton = new Clickable(120, 20, "slow")
+    let smButton = new Clickable(120, 20, 20, 20, "slow", "<")
     smButton.isHUD = true;
     smButton.onPress = () => {timeScale = 0.75}
     smButton.onHover = () => {smButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
-    smButton.text = "<"
     smButton.textSize = 10
-    smButton.width = 20
-    smButton.height = 20
     
-    let rsButton = new Clickable(140, 20, "reset")
+    let rsButton = new Clickable(140, 20, 20, 20, "reset", "●")
     rsButton.isHUD = true;
     rsButton.onPress = () => {timeScale = 1}
     rsButton.onHover = () => {rsButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
-    rsButton.text = "●"
     rsButton.textSize = 10
-    rsButton.width = 20
-    rsButton.height = 20
 
-    let ffButton = new Clickable(160, 20, "fast")
+    let ffButton = new Clickable(160, 20, 20, 20, "fast", ">")
     ffButton.isHUD = true;
     ffButton.onPress = () => {timeScale = 2}
     ffButton.onHover = () => {ffButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
-    ffButton.text = ">"
     ffButton.textSize = 10
-    ffButton.width = 20
-    ffButton.height = 20
 
-    let ffeButton = new Clickable(180, 20, "faster")
+    let ffeButton = new Clickable(180, 20, 20, 20, "faster", ">>")
     ffeButton.isHUD = true;
     ffeButton.onPress = () => {timeScale = 8}
     ffeButton.onHover = () => {ffeButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
-    ffeButton.text = ">>"
-    ffeButton.textSize = 10
-    ffeButton.width = 20
-    ffeButton.height = 20
+    ffButton.textSize = 10
 
-    let issuesButton = new Clickable(width - 100, height - 20, "faster")
+    let issuesButton = new Clickable(width - 100, height - 20, 100, 20, "bugs", "Report a bug (plz)")
     issuesButton.isHUD = true;
     issuesButton.onPress = () => {window.open("https://github.com/alextheperson/Tower-Defense/issues", '_blank');}
     issuesButton.onHover = () => {issuesButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
     issuesButton.onTick = () => {issuesButton.locate(width - 100, height - 20)}
     issuesButton.text = "Report a bug (plz)"
     issuesButton.textSize = 10
-    issuesButton.width = 100
-    issuesButton.height = 20
 
     for (let i = 0; i < Object.keys(towerTypes).length; i++) {
-      let tempButton = new Clickable(width - 150, 100 + 50 * i, Object.keys(towerTypes)[i])
+      let tempButton = new Clickable(width - 150, 100 + 50 * i, 150, 50, Object.keys(towerTypes)[i])
       tempButton.isHUD = true;
       tempButton.onPress = () => {towerToPlace = Object.keys(towerTypes)[i]}
       tempButton.onHover = () => {tempButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}
@@ -74,8 +57,6 @@ class UI {
           tempButton.onHover = () => {tempButton.color = "#bbbbbb";document.body.style.cursor = "pointer"}}
       }
       tempButton.textSize = 10
-      tempButton.width = 150
-      tempButton.height = 50
 
       buttons.buttons.push(tempButton)
     }

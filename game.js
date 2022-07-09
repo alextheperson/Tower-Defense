@@ -1,4 +1,6 @@
-var gridOffset, gridScale, bounds, coins, health, tiles, buttons, ui, towerToPlace, timeScale, nthWave, hasHad69, viewWindow, seed
+var bounds, coins, health, tiles, buttons, ui, towerToPlace, timeScale, nthWave, hasHad69, viewWindow, seed
+var gridOffset = [0, 0]
+var gridScale = 1
 
 function cyrb128(str) {
   let h1 = 1779033703, h2 = 3144134277,
@@ -123,9 +125,11 @@ function game() {
   }
 }
 
-function mouseWheel(event) {
-  gridScale += (event.delta * -0.01);
-  gridScale = constrain(gridScale, 0.25, 2);
+function scroll(event) {
+  if (mgr.isCurrent(game)) {
+    gridScale += (event.deltaY * -0.01);
+    gridScale = constrain(gridScale, 0.25, 2);
+  }
 }
 
 function drawGrid() {

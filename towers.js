@@ -38,7 +38,7 @@ var towerTypes = {
   },
   "Fused Cannon Tower": {
     "maxTargets": 1,
-    "range": 250,
+    "range": 350,
     "fireRate": 5/3,
     "accuracy": 0.2,
     "fused": true,
@@ -103,22 +103,22 @@ class TOWER {
   update() {
     this.targets = []
     let enemies = this.tiles.enemies;
-    
-    for (let i = 0; i < min(enemies.length, this.maxTargets); i++) {
-      for (let j = 0; j < enemies.length; j++) {
-        if (dist(this.x, this.y, enemies[j].position[0],  enemies[j].position[1]) < this.range) {
-          if (!this.targets.includes(enemies[j])){// || (this.targets.length < this.maxTargets && this.targets.length >= enemies.length)) {
-          if (this.targets[i] == undefined) {
-            this.targets[i] = enemies[j]
-          }
-          else if (enemies[j].distanceToEnd < this.targets[i].distanceToEnd) {
-            this.targets[i] = enemies[j]
-          }
-          }
+    let possibleEnemies = []
+
+    if (enemies.length > 0) {
+      for (let i = 0; i < enemies.length; i++) {
+        if (dist(this.x, this.y, enemies[i].position[0],  enemies[i].position[1]) < this.range) {
+          possibleEnemies.push({val:enemies[i].distanceToEnd,enemy:enemies[i]})
+        }
+      }
+
+      if (possibleEnemies.length > 0) {
+        let bestTargets = getMax(possibleEnemies, this.maxTargets)
+        for (let i = 0; i < this.maxTargets) {
+          this.targets[i] = bestTargets[i].enemy
         }
       }
     }
-
     if (this.cooldown <= 0) {
       if (this.targets.length > 0) {
         this.cooldown = 100;
@@ -201,9 +201,12 @@ class PROJECTILE {
         this.tiles.dealAreaDamage(this.x, this.y, this.stats.damage, this.stats.area)
         this.isSimulating = false
       } else if (dist(this.originalPosition[0], this.originalPosition[1], this.x, this.y) >= this.stats.range) {
-        // this.tiles.dealAreaDamage(this.x, this.y, this.stats.damage, this.stats.area)
-        // this.isSimulating = false
-        this.toClear = true;
+        if (this.fuse > -1) {
+          this.tiles.dealAreaDamage(this.x, this.y, this.stats.damage, this.stats.area)
+          this.isSimulating = false
+        } else {
+          this.toClear = true;
+        }
       }
     }
   }

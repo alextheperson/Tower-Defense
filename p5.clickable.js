@@ -56,21 +56,22 @@ function getTextBounds(m, font, size) {
 
 //Button Class
 class Clickable {
-  constructor(x, y, id) {
+  constructor(x, y, w, h, id, text) {
 	  this.x = x;			//X position of the clickable
 	  this.y = y;			//Y position of the clickable
+    this.show = true;
     this.id = id;
-	  this.width = 30;		//Width of the clickable
-	  this.height = 30;		//Height of the clickable
+	  this.width = w;		//Width of the clickable
+	  this.height = h;		//Height of the clickable
 	  this.color = "#dddddd";		//Background color of the clickable
 	  this.cornerRadius = 0;		//Corner radius of the clickable
 	  this.strokeWeight = 2;		//Stroke width of the clickable
 	  this.stroke = "#000000";	//Border color of the clickable
-	  this.text = "+";		//Text of the clickable
+	  this.text = text;		//Text of the clickable
 	  this.textColor = "#000000";	//Color for the text shown
 	  this.textSize = 24;		//Size for the text shown
 	  this.textFont = "sans-serif";	//Font for the text shown
-	  this.textScaled = false;     //Scale the text with the size of the clickable
+	  this.textScaled = true;     //Scale the text with the size of the clickable
 	
 	  // image options
 	  this.image = null; // image object from p5loadimage()
@@ -89,8 +90,8 @@ class Clickable {
 			for (let i = this.height; i > 0; i--) {
 				if (getTextBounds(this.text, this.textFont, i)[0] <= this.width
 					&& getTextBounds(this.text, this.textFont, i)[1] <= this.height) {
-					console.log("textbounds: " + getTextBounds(this.text, this.font, i));
-					console.log("boxsize: " + this.width + ", " + this.height);
+					// console.log("textbounds: " + getTextBounds(this.text, this.font, i));
+					// console.log("boxsize: " + this.width + ", " + this.height);
 					this.textSize = i / 2;
 					break;
 				}
@@ -169,36 +170,38 @@ class Clickable {
 
 	draw () {
     this.onTick()
-    
-		push();
-    rectMode(CORNER)
-		fill(this.color);
-		stroke(this.stroke);
-		strokeWeight(this.strokeWeight);
-		rect(this.x, this.y, this.width, this.height, this.cornerRadius);
-		fill(this.textColor);
-		noStroke();
-		if(this.image){
-			this.drawImage();
-		}
-		textAlign(CENTER, CENTER);
-		textSize(this.textSize);
-		textFont(this.textFont);
-		text(this.text, this.x + this.width / 2, this.y + this.height / 2);
-    let localMouseX, localMouseY
-    if (this.isHUD) {
-      localMouseX = mouseX
-      localMouseY = mouseY
-    } else {
-      localMouseX = (mouseX - gridOffset[0]) * (1 / gridScale);
-      localMouseY = (mouseY - gridOffset[1]) * (1 / gridScale);
+
+    if (this.show) {
+		  push();
+      rectMode(CORNER)
+		  fill(this.color);
+		  stroke(this.stroke);
+		  strokeWeight(this.strokeWeight);
+		  rect(this.x, this.y, this.width, this.height, this.cornerRadius);
+		  fill(this.textColor);
+		  noStroke();
+		  if(this.image){
+		  	this.drawImage();
+		  }
+		  textAlign(CENTER, CENTER);
+		  textSize(this.textSize);
+		  textFont(this.textFont);
+		  text(this.text, this.x + this.width / 2, this.y + this.height / 2);
+      let localMouseX, localMouseY
+      if (this.isHUD) {
+        localMouseX = mouseX
+        localMouseY = mouseY
+      } else {
+        localMouseX = (mouseX - gridOffset[0]) * (1 / gridScale);
+        localMouseY = (mouseY - gridOffset[1]) * (1 / gridScale);
+      }
+		  if (localMouseX >= this.x && localMouseY >= this.y
+		  	&& localMouseX < this.x + this.width && localMouseY < this.y + this.height) {
+		  	cl_lastHovered = this;
+		  	if (mouseIsPressed && !cl_mouseWasPressed)
+		  		cl_lastClicked = this;
+		  }
+		  pop();
     }
-		if (localMouseX >= this.x && localMouseY >= this.y
-			&& localMouseX < this.x + this.width && localMouseY < this.y + this.height) {
-			cl_lastHovered = this;
-			if (mouseIsPressed && !cl_mouseWasPressed)
-				cl_lastClicked = this;
-		}
-		pop();
 	}
 }

@@ -138,11 +138,15 @@ class Tile {
       if (this.right) rotate(HALF_PI)
       if (this.bottom) rotate(PI)
       if (this.left) rotate(1.5 * PI)
+
       
-      fill(100)
       stroke(0)
       strokeJoin(BEVEL)
       strokeWeight(2 / CELL_WIDTH)
+      fill(COLORS.grass(this.center[0] * CELL_WIDTH + CELL_WIDTH / 2, this.center[1] * CELL_WIDTH + CELL_WIDTH / 2))
+      arc(0, 0, 1.75, 3, 0, PI, PIE)
+      
+      fill(100)
       for (let i = 1; i < portalChunks.length; i++) {
         fill(COLORS.stoneColors[i + 5]);
         arc(0, 0, 1.75, 1.5, portalChunks[i - 1], portalChunks[i], PIE);

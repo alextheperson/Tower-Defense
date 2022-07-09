@@ -31,12 +31,12 @@ class colors {
 
   path(x, y) {
     let biome = noise(x / BIOME_SCALE, y / BIOME_SCALE)
-    if (biome <= 0.55) {
+    if (biome <= 0.6) {
       return lerpColor(this.path1, this.path3, noise(x / VARIATION_SCALE, y / VARIATION_SCALE))
-    } else if (biome <= 0.45) {
+    } else if (biome <= 0.4) {
       return lerpColor(this.path1, this.path2, noise(x / VARIATION_SCALE, y / VARIATION_SCALE))
     } else {
-      return this.path1
+      return lerpColor(this.path3, this.path2, noise(x / VARIATION_SCALE, y / VARIATION_SCALE))
     }
   }
   
@@ -108,4 +108,21 @@ function randBool() {
 
 function randInt(min, max) {
   return Math.floor(random(min, max))
+}
+
+function get3Max(ar){
+  
+  if (ar.length == 1) return [ar[0],ar[0],ar[0]];
+  if (ar.length == 2) return [ar[0],ar[0],(ar[0] > ar[1]) ? ar[0] : ar[1]];
+  if (ar.length == 3) return ar;
+  let max = [ar[0], ar[1], ar[2]];
+  max.sort((a,b)=>a.value-b.value);
+        
+  for (let i = 3;i<ar.length;i++){
+    if (ar[i] > max[0].value){
+      max[0] = {value:ar[i],index:i};
+      max.sort((a,b)=>a.value-b.value);
+    }
+  }
+  return max;
 }
